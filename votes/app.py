@@ -24,6 +24,10 @@ def games():
     if request.method == "POST":
         return GameController.create_game()
 
+    elif request.method == "GET":
+        return GameController.list_games()
+
+
 
 if __name__ == "__main__":
     app.run()
