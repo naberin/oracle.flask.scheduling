@@ -41,7 +41,7 @@ def get_games():
 
 @celery.on_after_configure.connect()
 def set_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(10.0, del_stale_games.s(), name='Delete Stale Games every 10 seconds')
+    sender.add_periodic_task(30.0, del_stale_games.s(), name='Delete Stale Games every 10 seconds')
 
 
 def _get_next_id():
