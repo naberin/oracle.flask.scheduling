@@ -28,4 +28,24 @@ class GameController:
             "page": c_page
         }), 200
 
+    @staticmethod
+    def get_game_with(game_id):
+        score_team_1 = app.rds.hget(game_id, Constants.TEAM_ONE)
+        score_team_2 = app.rds.hget(game_id, Constants.TEAM_TWO)
 
+        if score_team_1 and score_team_2:
+            score_1 = score_team_1.decode('UTF-8')
+            score_2 = score_team_2.decode('UTF-8')
+
+            return jsonify({
+                Constants.TEAM_ONE: int(score_1),
+                Constants.TEAM_TWO: int(score_2),
+            }), 200
+
+        else:
+            return GameController.err_404_game()
+
+
+    @staticmethod
+    def err_404_game():
+        return jsonify({"error": f"game not found"}), 404

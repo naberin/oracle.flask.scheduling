@@ -26,6 +26,12 @@ def games():
         return GameController.list_games()
 
 
+@app.route("/api/games/<game_id>", methods=["GET", "PUT"])
+def manage_game_with(game_id):
+
+    if request.method == "GET":
+        return GameController.get_game_with(game_id=game_id)
+
 if __name__ == "__main__":
     app.run()
 
