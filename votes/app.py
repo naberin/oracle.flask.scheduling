@@ -1,6 +1,4 @@
-import os
-
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from controllers.mainController import MainController
 from controllers.gameController import GameController
 from config.constants import Constants
@@ -26,7 +24,6 @@ def games():
 
     elif request.method == "GET":
         return GameController.list_games()
-
 
 
 if __name__ == "__main__":

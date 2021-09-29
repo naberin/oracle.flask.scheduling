@@ -1,6 +1,5 @@
 from flask import jsonify
 import app
-import sys
 
 
 class GameController:
