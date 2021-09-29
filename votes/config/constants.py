@@ -6,3 +6,6 @@ class Constants:
     # Team Keys
     TEAM_ONE = "team-1"
     TEAM_TWO = "team-2"
+
+    # Game metadata
+    METADATA_CREATED = 'created'

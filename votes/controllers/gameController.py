@@ -1,5 +1,8 @@
 from config.constants import Constants
+
 from flask import jsonify
+from datetime import datetime
+
 import app
 
 
@@ -8,11 +11,14 @@ class GameController:
     @staticmethod
     def create_game():
         game_id = app.rds.incr("games:id")
+        now = datetime.strftime(datetime.now(), "%b-%d-%Y %H:%M:%S")
+
         app.rds.lpush('games', f'G{game_id}')
         app.rds.hset(f'G{game_id}', Constants.TEAM_ONE, 0)
         app.rds.hset(f'G{game_id}', Constants.TEAM_TWO, 0)
+        app.rds.hset(f'G{game_id}', Constants.METADATA_CREATED, now)
 
-        return jsonify({"id": f'G{game_id}'}), 200
+        return jsonify({"id": f'G{game_id}'}), 201
 
     @staticmethod
     def list_games(c_page=1, limit=25):
@@ -32,14 +38,19 @@ class GameController:
     def get_game_with(game_id):
         score_team_1 = app.rds.hget(game_id, Constants.TEAM_ONE)
         score_team_2 = app.rds.hget(game_id, Constants.TEAM_TWO)
+        meta_created = app.rds.hget(game_id, Constants.METADATA_CREATED)
 
         if score_team_1 and score_team_2:
             score_1 = score_team_1.decode('UTF-8')
             score_2 = score_team_2.decode('UTF-8')
+            created = meta_created.decode('UTF-8')
 
             return jsonify({
                 Constants.TEAM_ONE: int(score_1),
                 Constants.TEAM_TWO: int(score_2),
+                "metadata": {
+                    Constants.METADATA_CREATED: created
+                }
             }), 200
 
         else:
