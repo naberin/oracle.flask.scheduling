@@ -5,3 +5,4 @@ environment
 
 # runtime
 *.db
+__pycache__
