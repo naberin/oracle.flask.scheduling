@@ -1,0 +1,7 @@
+# environment, misc
+.idea
+.DS_Store
+environment
+
+# runtime
+*.db
