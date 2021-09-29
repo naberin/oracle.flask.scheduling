@@ -8,7 +8,7 @@ from services.celery import CeleryApp
 app = Flask(__name__)
 app.config.update(
     CELERY_BROKER_URL='redis://localhost:6379/0',
-    CELERY_RESULT_BACKEND='redis://localhost:6379/0'
+    RESULT_BACKEND='redis://localhost:6379/0'
 )
 celery = CeleryApp(app).get()
 
@@ -28,6 +28,8 @@ def post_games():
     game_id = f"G{gid}"
 
     rds.lpush('games', game_id)
+    return jsonify({"id": game_id}), 200
+
 
 @app.route("/api/games", methods=["GET"])
 def get_games():
@@ -48,7 +50,11 @@ def _get_next_id():
 
 @celery.task()
 def del_stale_games():
-    return rds.rpop("games")
+    game_id = rds.rpop("games")
+    if game_id:
+        return game_id.decode('UTF-8')
+    else:
+        return None
 
 
 if __name__ == "__main__":

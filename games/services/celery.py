@@ -6,7 +6,7 @@ class CeleryApp:
     def __init__(self, app):
         self.celery = Celery(
             app.import_name,
-            backend=app.config['CELERY_RESULT_BACKEND'],
+            backend=app.config['RESULT_BACKEND'],
             broker=app.config['CELERY_BROKER_URL']
         )
 
