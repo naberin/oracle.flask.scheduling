@@ -45,7 +45,33 @@ class GameController:
         else:
             return GameController.err_404_game()
 
+    @staticmethod
+    def put_point(game_id, team):
+        num_of_games = app.rds.llen('games')
+        games = app.rds.lrange('games', 0, num_of_games)
+        list_of_games = [g.decode('UTF-8') for g in games]
+
+        if team in [Constants.TEAM_ONE, Constants.TEAM_TWO] and game_id in list_of_games:
+            app.rds.hincrby(game_id, team)
+
+            points = app.rds.hget(game_id, team).decode('UTF-8')
+
+            return jsonify({
+                team: points
+            }), 200
+
+        elif game_id not in list_of_games:
+            return GameController.err_404_game()
+        else:
+            return GameController.err_400_body_not_found(team)
 
     @staticmethod
     def err_404_game():
         return jsonify({"error": f"game not found"}), 404
+
+    @staticmethod
+    def err_400_body_not_found(team=None):
+        if team:
+            return jsonify({"error": f"team {team} not found."}), 400
+        else:
+            return jsonify({"error": f"no team specified."}), 400

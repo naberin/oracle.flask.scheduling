@@ -32,6 +32,15 @@ def manage_game_with(game_id):
     if request.method == "GET":
         return GameController.get_game_with(game_id=game_id)
 
+    elif request.method == "PUT":
+
+        if request.json and "team" in request.json:
+            team = request.json["team"]
+            return GameController.put_point(game_id=game_id, team=team)
+        else:
+            return GameController.err_400_body_not_found()
+
+
 if __name__ == "__main__":
     app.run()
 
