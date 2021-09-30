@@ -6,3 +6,4 @@ environment
 # runtime
 *.db
 __pycache__
+celerybeat-schedule
