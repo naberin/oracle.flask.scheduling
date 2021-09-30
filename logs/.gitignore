@@ -1,0 +1,8 @@
+# environment, misc
+.idea
+.DS_Store
+environment
+
+# runtime
+*.db
+__pycache__
