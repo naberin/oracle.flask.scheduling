@@ -1,18 +1,20 @@
 import sys
+import os
 import redis
 
 from flask import Flask, jsonify
 from services.celery import CeleryApp
 
+redis_host = os.getenv('REDIS_HOST', 'localhost')
 
 app = Flask(__name__)
 app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379/0',
-    RESULT_BACKEND='redis://localhost:6379/0'
+    CELERY_BROKER_URL=f'redis://{redis_host}:6379/0',
+    RESULT_BACKEND=f'redis://{redis_host}:6379/0'
 )
 celery = CeleryApp(app).get()
 
-rds = redis.Redis(host='localhost', port=6379, db=0)
+rds = redis.Redis(host=redis_host, port=6379, db=0)
 rds.set("games:id", 999)
 
 
@@ -51,6 +53,7 @@ def _get_next_id():
 @celery.task()
 def del_stale_games():
     game_id = rds.rpop("games")
+    print(f"Deleted: {game_id}", file=sys.stderr)
     if game_id:
         return game_id.decode('UTF-8')
     else:
